@@ -1,9 +1,7 @@
 package com.traveller.domain;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -30,6 +28,9 @@ public class Trip {
     @Size(min = 2, max = 30)
     private String toTown;
 
+    @NotNull(message = "Поле дата поездки обязательно для заполения")
+    @FutureOrPresent(message = "дата поездки не может быть раньше сегодняшней даты")
+    @DateTimeFormat(pattern = "DD.MM.YYYY")
     private LocalDate departureDateAndTime;
 
 

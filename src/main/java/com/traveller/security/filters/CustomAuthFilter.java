@@ -51,7 +51,5 @@ public class CustomAuthFilter extends UsernamePasswordAuthenticationFilter {
         response.addCookie(new Cookie("Authorization", token));
         response.sendRedirect("/main");
 
-
-
     }
 }

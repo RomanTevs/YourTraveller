@@ -51,7 +51,8 @@
                     <tr>
                         <td>[[${trip.fromTown}]]</td>
                         <td>[[${trip.toTown}]]</td>
-                        <td>[[${trip.departureDateAndTime}]]</td>
+                        <!--<td>[[${trip.departureDateAndTime}]]</td>    УДАЛИ НЕ ЗАБУДЬ !!!!!-->
+                        <td>[[${#temporals.format(trip.departureDateAndTime, 'dd.MM.yyyy')}]]</td>
                         <td><a class="h6 mr-3" th:href="@{'/main/edit/' + ${trip.id}}">
                             <button>Изменить</button>
                         </a></td>

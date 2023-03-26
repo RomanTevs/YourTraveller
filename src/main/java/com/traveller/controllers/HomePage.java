@@ -10,7 +10,6 @@ public class HomePage {
 
     @GetMapping
     public String introGet() {
-        System.out.println("");
         return "home-page/home-page";
     }
     @GetMapping("/about")
