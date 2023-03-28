@@ -7,15 +7,15 @@
     <link rel="stylesheet" th:href="@{/css/registration-page.css}">
 </head>
 <body>
-<form class="form" action="submit-form.php" method="POST">
+<form class="form" th:action="@{/registration}" method="post" th:object="${newUser}">
     <h2>Регистрация </h2>
     <div class="form-control">
         <label for="login">Логин:</label>
-        <input type="text" id="login" name="login" placeholder="Введите логин">
+        <input type="text" id="login" th:field="*{name}" name="login" placeholder="Введите логин">
     </div>
     <div class="form-control">
         <label for="password">Пароль:</label>
-        <input type="password" id="password" name="password" placeholder="Введите пароль">
+        <input type="password" id="password" th:field="*{password}" name="password" placeholder="Введите пароль">
     </div>
     <button type="submit" class="btn1">Зарегистрироваться</button>
 </form>

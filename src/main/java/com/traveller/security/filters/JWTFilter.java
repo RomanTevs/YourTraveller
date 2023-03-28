@@ -39,12 +39,19 @@ public class JWTFilter extends OncePerRequestFilter {
         Cookie[] cookies = request.getCookies();
         if (cookies == null) {
             filterChain.doFilter(request, response);
+            return;
         }
         Optional<String> potentialToken = Arrays.stream(cookies)
                 .filter(cookie -> ("Authorization".equals(cookie.getName())))
                 .map(cookie -> cookie.getValue())
                 .findFirst();
-        String token = potentialToken.orElseThrow(() -> new BadCredentialsException("Invalid JWT Token"));
+        String token = null;
+        try {
+            token = potentialToken.orElseThrow(() -> new BadCredentialsException("Invalid JWT Token"));
+        } catch (BadCredentialsException e) {
+            filterChain.doFilter(request, response);
+            return;
+        }
 
 
         if (token != null && !token.isBlank()) {
