@@ -3,6 +3,8 @@ package com.traveller.domain;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -20,11 +22,11 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    @NotBlank(message = "Это поле не может быть пустым или иметь меньше 3 символов")
-    @Min(value = 3)
+    @NotEmpty(message = "логин не может быть пустой строкой")
+    @Size(min = 2, max = 27,message = "размер от 2 до 27")
     private String name;
-    @NotBlank(message = "Это поле не может быть пустым или иметь меньше 3 символов")
-    @Min(value = 3)
+    @NotEmpty(message = "пароль не может быть пустой строкой")
+    @Size(min = 3, max = 90,message = "размер от 2 до 27")
     private String password;
 
     public User(String name, String password) {

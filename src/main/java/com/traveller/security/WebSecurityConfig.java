@@ -38,19 +38,19 @@ public class WebSecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
         http.csrf().disable()
-                        .sessionManagement()
-                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                        .and()
-                        .addFilter(customAuthFilter())
-                        .addFilterAfter(jwtFilter, CustomAuthFilter.class)
-                        .authorizeHttpRequests((requests) -> requests
+                .sessionManagement()
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .and()
+                .addFilter(customAuthFilter())
+                .addFilterAfter(jwtFilter, CustomAuthFilter.class)
+                .authorizeHttpRequests((requests) -> requests
                         .requestMatchers("/home-page/**").permitAll()
                         .requestMatchers("/logout", "/login", "/registration").permitAll()
                         .requestMatchers("/css/**", "/js/**", "/webjars/**").permitAll()
                         .anyRequest().authenticated())
-                        .formLogin()
-                        .loginPage("/login")
-                        .defaultSuccessUrl("/main");
+                .formLogin()
+                .loginPage("/login")
+                .defaultSuccessUrl("/main");
 
         return http.build();
     }
@@ -63,7 +63,7 @@ public class WebSecurityConfig {
 
     @Bean
     PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
+        return NoOpPasswordEncoder.getInstance();
     }
 
     @Bean
@@ -71,7 +71,6 @@ public class WebSecurityConfig {
         CustomAuthFilter customAuthFilter = new CustomAuthFilter();
         return customAuthFilter;
     }
-
 
 
 }

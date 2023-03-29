@@ -7,7 +7,7 @@
     <link rel="stylesheet" th:href="@{/css/registration-page.css}">
 </head>
 <body>
-<form class="form" th:action="@{/registration}" method="post" th:object="${newUser}">
+<form class="form" th:action="@{/registration}" autocomplete="off" method="post" th:object="${newUser}">
     <h2>Регистрация </h2>
     <div class="form-control">
         <label for="login">Логин:</label>

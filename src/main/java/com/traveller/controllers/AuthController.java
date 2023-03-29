@@ -13,6 +13,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -44,21 +45,24 @@ public class AuthController {
 
     //http://localhost:8080/registration
     @GetMapping("/registration")
-    public String showRegistrationPage() {
+    public String showRegistrationPage(Model model) {
+        model.addAttribute("newUser",new User());
         return "auth/registration-page";
     }
+
 
     @PostMapping("/registration")
     public String Registration(@ModelAttribute("newUser") @Valid User user,
                              BindingResult result, RedirectAttributes ra) {
         if (result.hasErrors()) {
-            return "auth/registration-page";
+            ra.addFlashAttribute("message", "хз че за ошибка ,брат.все получится!");
+            return "redirect:/registration";
         }
         if (userService.existByName(user.getName())) {
             ra.addFlashAttribute("message", "Пользователь с таким именем уже существует!");
             return "redirect:/registration";
         }
-        user.getRoles().add(new Role("user"));
+        user.getRoles().add(new Role("USER"));
         userService.save(user);
         ra.addFlashAttribute("message", "Ваш аккаунт успешно создан,пожалуйста залогинтесь под ним");
         return "redirect:/login";

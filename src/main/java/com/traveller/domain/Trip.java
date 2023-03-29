@@ -25,7 +25,7 @@ public class Trip {
     @Size(min = 2, max = 30)
     private String fromTown;
     @NotEmpty(message = "Неправильно указан город,пожалуйста выберете город из выпадающего списка")
-    @Size(min = 2, max = 30)
+    @Size(min = 2, max = 31)
     private String toTown;
 
     @NotNull(message = "Поле дата поездки обязательно для заполения")
