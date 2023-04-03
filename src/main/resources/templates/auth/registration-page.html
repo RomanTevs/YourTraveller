@@ -13,12 +13,22 @@
         <label for="login">Логин:</label>
         <input type="text" id="login" th:field="*{name}" name="login" placeholder="Введите логин">
     </div>
+    <div th:if="${#fields.hasErrors('name')}" class="alert alert-danger">
+        <div th:errors="*{name}"></div>
+    </div>
+    <div th:if="${message=='Пользователь с таким именем уже существует!'}" class="alert alert-danger text-center">
+        [[${message}]]
+    </div>
     <div class="form-control">
         <label for="password">Пароль:</label>
         <input type="password" id="password" th:field="*{password}" name="password" placeholder="Введите пароль">
     </div>
+    <div th:if="${#fields.hasErrors('password')}" class="alert alert-danger">
+        <div th:errors="*{password}"></div>
+    </div>
     <button type="submit" class="btn1">Зарегистрироваться</button>
 </form>
+
 
 <div class="btn2"><a th:href="@{/login}">
     <button>Войти под вашим существующим логином</button>

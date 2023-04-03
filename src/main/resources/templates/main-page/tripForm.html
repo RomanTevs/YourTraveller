@@ -24,7 +24,7 @@
                            class="form-control" oninput="autoHint(this.id,this.parentNode.id)">
                 </div>
                 <div style="color:red" th:if="${#fields.hasErrors('fromTown')}"
-                     th:errors="*{fromTown}">Неправильно указан город,пожалуйста выберете город из выпадающего списка
+                     th:errors="*{fromTown}">
                 </div>
             </div>
 
@@ -36,7 +36,7 @@
                            class="form-control" oninput="autoHint(this.id,this.parentNode.id)">
                 </div>
                 <div style="color:red" th:if="${#fields.hasErrors('toTown')}"
-                     th:errors="*{toTown}">Неправильно указан город,пожалуйста выберете город из выпадающего списка
+                     th:errors="*{toTown}">
                 </div>
             </div>
 
@@ -46,8 +46,7 @@
                     <input type="date" th:field="*{departureDateAndTime}" class="form-control">
                 </div>
                 <div style="color:red" th:if="${#fields.hasErrors('departureDateAndTime')}"
-                     th:errors="*{departureDateAndTime}">Поле "Когда" обязательно для заполнения в формате MM-dd-yyyy,
-                    например : 01-10-2023
+                     th:errors="*{departureDateAndTime}">
                 </div>
             </div>
 

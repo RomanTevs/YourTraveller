@@ -22,16 +22,12 @@ import org.springframework.security.web.SecurityFilterChain;
 @Configuration
 @EnableWebSecurity(debug = true)
 public class WebSecurityConfig {
-    private final UserDetailsServiceImpl userDetailsService;
+
     private final JWTFilter jwtFilter;
-    private final JWTUtil jwtUtil;
 
-    public WebSecurityConfig(UserDetailsServiceImpl userDetailsService, @Lazy JWTFilter jwtFilter,
-                             JWTUtil jwtUtil) {
-        this.userDetailsService = userDetailsService;
+
+    public WebSecurityConfig(JWTFilter jwtFilter) {
         this.jwtFilter = jwtFilter;
-        this.jwtUtil = jwtUtil;
-
     }
 
     @Bean

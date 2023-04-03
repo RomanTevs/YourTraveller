@@ -21,6 +21,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.util.List;
+
 @Controller
 public class AuthController {
 
@@ -54,9 +56,9 @@ public class AuthController {
     @PostMapping("/registration")
     public String Registration(@ModelAttribute("newUser") @Valid User user,
                              BindingResult result, RedirectAttributes ra) {
+
         if (result.hasErrors()) {
-            ra.addFlashAttribute("message", "хз че за ошибка ,брат.все получится!");
-            return "redirect:/registration";
+            return "auth/registration-page";
         }
         if (userService.existByName(user.getName())) {
             ra.addFlashAttribute("message", "Пользователь с таким именем уже существует!");
@@ -64,7 +66,7 @@ public class AuthController {
         }
         user.getRoles().add(new Role("USER"));
         userService.save(user);
-        ra.addFlashAttribute("message", "Ваш аккаунт успешно создан,пожалуйста залогинтесь под ним");
+        ra.addFlashAttribute("message", "Ваш аккаунт успешно создан,пожалуйста залогиньтесь под ним");
         return "redirect:/login";
     }
 
