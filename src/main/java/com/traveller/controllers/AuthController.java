@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
+import java.util.Optional;
 
 @Controller
 public class AuthController {
@@ -64,11 +65,16 @@ public class AuthController {
             ra.addFlashAttribute("message", "Пользователь с таким именем уже существует!");
             return "redirect:/registration";
         }
-        user.getRoles().add(new Role("USER"));
+        Role roleForNewUser = roleService.findByName("USER").get();
+        System.out.println(1);
+        user.getRoles().add(roleForNewUser);
+        System.out.println(2);
         userService.save(user);
+        System.out.println(3);
         ra.addFlashAttribute("message", "Ваш аккаунт успешно создан,пожалуйста залогиньтесь под ним");
         return "redirect:/login";
     }
+
 
 
 
