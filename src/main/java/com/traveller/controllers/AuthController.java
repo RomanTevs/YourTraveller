@@ -66,11 +66,11 @@ public class AuthController {
             return "redirect:/registration";
         }
         Role roleForNewUser = roleService.findByName("USER").get();
-        System.out.println(1);
+
         user.getRoles().add(roleForNewUser);
-        System.out.println(2);
+
         userService.save(user);
-        System.out.println(3);
+
         ra.addFlashAttribute("message", "Ваш аккаунт успешно создан,пожалуйста залогиньтесь под ним");
         return "redirect:/login";
     }
