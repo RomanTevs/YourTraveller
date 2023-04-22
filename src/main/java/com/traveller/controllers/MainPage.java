@@ -32,7 +32,6 @@ public class MainPage {
     public String getMain(Model model) {
         List<Trip> trips = tripService.findAll();
         model.addAttribute("trips", trips);
-        System.out.println();
         return "main-page/main";
     }
 

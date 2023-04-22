@@ -53,4 +53,5 @@ public class Trip {
         this.toTown = toTown;
         this.departureDateAndTime = departureDateAndTime;
     }
+
 }

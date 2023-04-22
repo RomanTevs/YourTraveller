@@ -44,6 +44,7 @@
                     <th>Когда</th>
                     <th>Изменить поездку</th>
                     <th>Удалить поездку</th>
+                    <th>Создатель поездки</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -51,7 +52,6 @@
                     <tr>
                         <td>[[${trip.fromTown}]]</td>
                         <td>[[${trip.toTown}]]</td>
-                        <!--<td>[[${trip.departureDateAndTime}]]</td>    УДАЛИ НЕ ЗАБУДЬ !!!!!-->
                         <td>[[${#temporals.format(trip.departureDateAndTime, 'dd.MM.yyyy')}]]</td>
                         <td><a class="h6 mr-3" th:href="@{'/main/edit/' + ${trip.id}}">
                             <button>Изменить</button>
@@ -59,6 +59,7 @@
                         <td><a  class="h6 mr-3" th:href="@{'/main/delete/' + ${trip.id}}" methods="post" >
                             <button>Удалить</button>
                         </a></td>
+                        <td>[[${trip.creatorOfThisTrip.getName()}]]</td>
                     </tr>
                 </th:block>
                 </tbody>
