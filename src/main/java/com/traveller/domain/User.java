@@ -21,10 +21,10 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     @NotEmpty(message = "логин не может быть пустой строкой")
-    @Size(min = 2, max = 27,message = "размер от 2 до 27")
+    @Size(min = 2, max = 27, message = "размер от 2 до 27")
     private String name;
     @NotEmpty(message = "пароль не может быть пустой строкой")
-    @Size(min = 3, max = 90,message = "размер от 2 до 27")
+    @Size(min = 3, max = 90, message = "размер от 2 до 27")
     private String password;
 
     public User(String name, String password) {
@@ -47,6 +47,10 @@ public class User {
             inverseJoinColumns = @JoinColumn(name = "role_id")
     )
     private Set<Role> roles = new HashSet<>();
+
+    @OneToMany(cascade = CascadeType.ALL,
+            mappedBy = "creatorOfThisTrip")
+    private Set<Trip> tripsCreatedByThisUser;
 
 
 }
