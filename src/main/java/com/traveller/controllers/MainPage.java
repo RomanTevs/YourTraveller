@@ -3,6 +3,8 @@ package com.traveller.controllers;
 import com.traveller.domain.Trip;
 import com.traveller.service.TripService;
 import jakarta.validation.Valid;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -12,6 +14,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import javax.naming.AuthenticationException;
 import java.util.List;
 import java.util.Optional;
 
@@ -29,9 +32,11 @@ public class MainPage {
 
 
     @GetMapping("/main")
-    public String getMain(Model model) {
+    public String getMain(Model model, Authentication authentication) {
         List<Trip> trips = tripService.findAll();
         model.addAttribute("trips", trips);
+        User currentUser = (User) authentication.getPrincipal();
+        model.addAttribute("currentUser",currentUser);
         return "main-page/main";
     }
 

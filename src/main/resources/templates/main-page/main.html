@@ -53,13 +53,18 @@
                         <td>[[${trip.fromTown}]]</td>
                         <td>[[${trip.toTown}]]</td>
                         <td>[[${#temporals.format(trip.departureDateAndTime, 'dd.MM.yyyy')}]]</td>
-                        <td><a class="h6 mr-3" th:href="@{'/main/edit/' + ${trip.id}}">
-                            <button>Изменить</button>
-                        </a></td>
+                        <td>
+                            <a class="h6 mr-3"
+                               th:href="@{'/main/edit/' + ${trip.id}}"
+                               th:unless="${trip.creatorOfThisTrip.name != currentUser.username}">
+                                <button>Изменить</button>
+                            </a>
+                            <span th:if="${trip.creatorOfThisTrip.name != currentUser.username}">Изменить(Неактивна)</span>
+                        </td>
                         <td><a  class="h6 mr-3" th:href="@{'/main/delete/' + ${trip.id}}" methods="post" >
                             <button>Удалить</button>
                         </a></td>
-                        <td>[[${trip.creatorOfThisTrip.getName()}]]</td>
+                        <td>[[${trip.creatorOfThisTrip.name}]]</td>
                     </tr>
                 </th:block>
                 </tbody>
