@@ -2,6 +2,7 @@ package com.traveller.controllers;
 
 import com.traveller.domain.Trip;
 import com.traveller.service.TripService;
+import com.traveller.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.User;
@@ -14,7 +15,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import javax.naming.AuthenticationException;
 import java.util.List;
 import java.util.Optional;
 
@@ -25,9 +25,11 @@ import java.util.Optional;
 public class MainPage {
 
     private final TripService tripService;
+    private final UserService userService;
 
-    public MainPage(TripService tripService) {
+    public MainPage(TripService tripService, UserService userService) {
         this.tripService = tripService;
+        this.userService = userService;
     }
 
 
@@ -41,12 +43,24 @@ public class MainPage {
     }
 
     @GetMapping("main/creating-new-trip")
-    public String createNewTrip(Model model) {
-        model.addAttribute("newTrip", new Trip());
-        model.addAttribute("paigeName", "Создание новой поездки");
-        return "main-page/tripForm";
-    }
+    public String createNewTrip(Model model,Authentication authentication,RedirectAttributes ra) {
 
+        User currentUser = (User) authentication.getPrincipal();
+        Optional<com.traveller.domain.User> optionalUserFromDB = userService.findByUserName(currentUser.getUsername());
+        if (optionalUserFromDB.isPresent()){
+            com.traveller.domain.User userFromDB = optionalUserFromDB.get();
+            Trip trip = new Trip();
+            trip.setCreatorOfThisTrip(userFromDB);
+            model.addAttribute("newTrip",trip);
+            model.addAttribute("paigeName", "Создание новой поездки");
+            return "main-page/tripForm";
+        } else {
+            ra.addFlashAttribute("message", "пользователь,под которым вы " +
+                                                                    "пытаетесь создать поездку отсутвует в БД");
+            return "redirect:/main";
+        }
+
+    }
 
     @PostMapping("main/save-new-trip")
     public String saveNewTrip(@ModelAttribute("newTrip") @Valid Trip trip,
