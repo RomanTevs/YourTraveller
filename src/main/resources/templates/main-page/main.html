@@ -15,6 +15,10 @@
 
     <h1 class="container-fluid text-center">Главная страница</h1>
 
+    <a th:href="@{logout}"><button id="logout">ВЫХОД</button></a>
+
+    <div class="login-info" th:text="'Вы зашли под логином: ' + ${currentUser.username}"></div>
+
     <div th:if="${message=='Изменения успешно внесены!'}" class="alert alert-success text-center">
         [[${message}]]
     </div>

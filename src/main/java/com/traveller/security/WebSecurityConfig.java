@@ -31,7 +31,7 @@ public class WebSecurityConfig {
         http.csrf().disable()
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                .and()
+                    .and()
                 .addFilter(customAuthFilter())
                 .addFilterAfter(jwtFilter, CustomAuthFilter.class)
                 .authorizeHttpRequests((requests) -> requests
@@ -41,7 +41,14 @@ public class WebSecurityConfig {
                         .anyRequest().authenticated())
                 .formLogin()
                 .loginPage("/login")
-                .defaultSuccessUrl("/main");
+                .defaultSuccessUrl("/main")
+                    .and()
+                .logout()
+                .logoutUrl("/logout")
+                .logoutSuccessUrl("/login")
+                .deleteCookies("Authorization")
+                .clearAuthentication(true)
+                .invalidateHttpSession(false);
 
         return http.build();
     }
