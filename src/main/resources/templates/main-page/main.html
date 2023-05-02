@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org" >
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>Main page of Traveller</title>
@@ -56,14 +56,18 @@
                         <td>
                             <a class="h6 mr-3"
                                th:href="@{'/main/edit/' + ${trip.id}}"
-                               th:unless="${trip.creatorOfThisTrip.name != currentUser.username}">
+                               th:if="${trip.creatorOfThisTrip.name == currentUser.username or isAdmin}">
                                 <button>Изменить</button>
                             </a>
-                            <span th:if="${trip.creatorOfThisTrip.name != currentUser.username}">Изменить(Неактивна)</span>
+                            <span th:if="${trip.creatorOfThisTrip.name != currentUser.username and !isAdmin}">Изменить(Неактивна)</span>
                         </td>
-                        <td><a  class="h6 mr-3" th:href="@{'/main/delete/' + ${trip.id}}" methods="post" >
+                        <td><a class="h6 mr-3"
+                               th:href="@{'/main/delete/' + ${trip.id}}" methods="post"
+                               th:if="${trip.creatorOfThisTrip.name == currentUser.username or isAdmin}">
                             <button>Удалить</button>
-                        </a></td>
+                        </a>
+                            <span th:if="${trip.creatorOfThisTrip.name != currentUser.username and !isAdmin}">Удалить(Неактивна)</span>
+                        </td>
                         <td>[[${trip.creatorOfThisTrip.name}]]</td>
                     </tr>
                 </th:block>
@@ -80,7 +84,6 @@
     </div>
 
 </div>
-
 
 
 </body>

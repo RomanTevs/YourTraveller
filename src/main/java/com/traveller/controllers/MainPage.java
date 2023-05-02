@@ -37,8 +37,14 @@ public class MainPage {
     public String getMain(Model model, Authentication authentication) {
         List<Trip> trips = tripService.findAll();
         model.addAttribute("trips", trips);
+
         User currentUser = (User) authentication.getPrincipal();
         model.addAttribute("currentUser",currentUser);
+
+        boolean isAdmin = authentication.getAuthorities().stream()
+                .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ADMIN"));
+        model.addAttribute("isAdmin", isAdmin);
+
         return "main-page/main";
     }
 
