@@ -33,7 +33,7 @@ public class Trip {
     @DateTimeFormat(pattern = "DD.MM.YYYY")
     private LocalDate departureDateAndTime;
 
-    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id")
     private User creatorOfThisTrip;
 
