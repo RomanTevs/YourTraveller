@@ -7,7 +7,9 @@ import lombok.NoArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 
 @Entity
@@ -45,7 +47,7 @@ public class Trip {
             joinColumns = @JoinColumn(name = "trip_id"),
             inverseJoinColumns = @JoinColumn(name = "user_id")
     )
-    private List<User> passengers;
+    private Set<User> passengers = new HashSet<>();
 
 
     public Trip(String fromTown, String toTown, LocalDate departureDateAndTime) {

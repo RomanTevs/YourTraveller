@@ -38,8 +38,12 @@ public class MainPage {
         List<Trip> trips = tripService.findAll();
         model.addAttribute("trips", trips);
 
-        User currentUser = (User) authentication.getPrincipal();
-        model.addAttribute("currentUser",currentUser);
+        User springSecurityUser = (User) authentication.getPrincipal();
+        Optional<com.traveller.domain.User> optionalUserFromDB = userService.findByUserName(springSecurityUser.getUsername());
+        if (optionalUserFromDB.isPresent()) {
+            com.traveller.domain.User userFromDB = optionalUserFromDB.get();
+            model.addAttribute("currentUser",userFromDB);
+        }
 
         boolean isAdmin = authentication.getAuthorities().stream()
                 .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ADMIN"));

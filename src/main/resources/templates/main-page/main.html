@@ -15,9 +15,11 @@
 
     <h1 class="container-fluid text-center">Главная страница</h1>
 
-    <a th:href="@{logout}"><button id="logout">ВЫХОД</button></a>
+    <a th:href="@{logout}">
+        <button id="logout">ВЫХОД</button>
+    </a>
 
-    <div class="login-info" th:text="'Вы зашли под логином: ' + ${currentUser.username}"></div>
+    <div class="login-info" th:text="'Вы зашли под логином: ' + ${currentUser.name}"></div>
 
     <div th:if="${message=='Изменения успешно внесены!'}" class="alert alert-success text-center">
         [[${message}]]
@@ -48,7 +50,9 @@
                     <th>Когда</th>
                     <th>Изменить поездку</th>
                     <th>Удалить поездку</th>
-                    <th>Создатель поездки</th>
+                    <th>Создатель поездки(Водитель)</th>
+                    <th>Пассажиры</th>
+                    <th>Действия</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -60,19 +64,39 @@
                         <td>
                             <a class="h6 mr-3"
                                th:href="@{'/main/edit/' + ${trip.id}}"
-                               th:if="${trip.creatorOfThisTrip.name == currentUser.username or isAdmin}">
+                               th:if="${trip.creatorOfThisTrip.name == currentUser.name or isAdmin}">
                                 <button>Изменить</button>
                             </a>
-                            <span th:if="${trip.creatorOfThisTrip.name != currentUser.username and !isAdmin}">Изменить(Неактивна)</span>
+                            <span th:if="${trip.creatorOfThisTrip.name != currentUser.name and !isAdmin}">Изменить(Неактивна)</span>
                         </td>
-                        <td><a class="h6 mr-3"
+                        <td>
+                            <a class="h6 mr-3"
                                th:href="@{'/main/delete/' + ${trip.id}}" methods="post"
-                               th:if="${trip.creatorOfThisTrip.name == currentUser.username or isAdmin}">
-                            <button>Удалить</button>
-                        </a>
-                            <span th:if="${trip.creatorOfThisTrip.name != currentUser.username and !isAdmin}">Удалить(Неактивна)</span>
+                               th:if="${trip.creatorOfThisTrip.name == currentUser.name or isAdmin}">
+                                <button>Удалить</button>
+                            </a>
+                            <span th:if="${trip.creatorOfThisTrip.name != currentUser.name and !isAdmin}">Удалить(Неактивна)</span>
                         </td>
                         <td>[[${trip.creatorOfThisTrip.name}]]</td>
+                        <td>
+                            <span th:if="${trip.passengers.isEmpty()}">пассажиров пока нет</span>
+                            <span th:if="!${trip.passengers.isEmpty()}" th:each="passenger, iterStat : ${trip.passengers}">
+                                <span th:text="${passenger.name}"></span>
+                                <span th:if="${!iterStat.last}">, </span>
+                            </span>
+                        </td>
+                        <td>
+                            <a class="h6 mr-3"
+                               th:href="@{'/main/join/' + ${trip.id}}"
+                               th:if="${trip.creatorOfThisTrip.name != currentUser.name}">
+                                <button>Присоединиться к поездке</button>
+                            </a>
+                            <a class="h6 mr-3"
+                               th:href="@{'/main/leave/' + ${trip.id}}"
+                               th:if="${trip.passengers.contains(currentUser)}">
+                                <button>Покинуть поездку</button>
+                            </a>
+                        </td>
                     </tr>
                 </th:block>
                 </tbody>
