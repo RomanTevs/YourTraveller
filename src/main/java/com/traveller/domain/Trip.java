@@ -56,4 +56,15 @@ public class Trip {
         this.departureDateAndTime = departureDateAndTime;
     }
 
+    @Override
+    public String toString() {
+        return "Trip{" +
+                "id=" + id +
+                ", fromTown='" + fromTown + '\'' +
+                ", toTown='" + toTown + '\'' +
+                ", departureDateAndTime=" + departureDateAndTime +
+                '}';
+    }
+
+
 }
