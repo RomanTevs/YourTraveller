@@ -5,6 +5,7 @@ import com.traveller.service.TripService;
 import com.traveller.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -42,7 +43,7 @@ public class MainPage {
         Optional<com.traveller.domain.User> optionalUserFromDB = userService.findByUserName(springSecurityUser.getUsername());
         if (optionalUserFromDB.isPresent()) {
             com.traveller.domain.User userFromDB = optionalUserFromDB.get();
-            model.addAttribute("currentUser",userFromDB);
+            model.addAttribute("currentUser", userFromDB);
         }
 
         boolean isAdmin = authentication.getAuthorities().stream()
@@ -53,20 +54,20 @@ public class MainPage {
     }
 
     @GetMapping("main/creating-new-trip")
-    public String createNewTrip(Model model,Authentication authentication,RedirectAttributes ra) {
+    public String createNewTrip(Model model, Authentication authentication, RedirectAttributes ra) {
 
         User currentUser = (User) authentication.getPrincipal();
         Optional<com.traveller.domain.User> optionalUserFromDB = userService.findByUserName(currentUser.getUsername());
-        if (optionalUserFromDB.isPresent()){
+        if (optionalUserFromDB.isPresent()) {
             com.traveller.domain.User userFromDB = optionalUserFromDB.get();
             Trip trip = new Trip();
             trip.setCreatorOfThisTrip(userFromDB);
-            model.addAttribute("newTrip",trip);
+            model.addAttribute("newTrip", trip);
             model.addAttribute("paigeName", "Создание новой поездки");
             return "main-page/tripForm";
         } else {
             ra.addFlashAttribute("message", "пользователь,под которым вы " +
-                                                                    "пытаетесь создать поездку отсутвует в БД");
+                    "пытаетесь создать поездку отсутвует в БД");
             return "redirect:/main";
         }
 
@@ -112,4 +113,28 @@ public class MainPage {
         }
         return "redirect:/main";
     }
+
+    @GetMapping("/main/join/{trip}")
+    public String joinTheTrip(@PathVariable Trip trip, RedirectAttributes ra, Authentication authentication) {
+
+        if(trip == null){
+            ra.addFlashAttribute("message", "поездка,в которую вы " +
+                    "пытаетесь присоединиться отсутвует в БД");
+            return "redirect:/main";
+        }
+        User currentUser = (User) authentication.getPrincipal();
+        Optional<com.traveller.domain.User> optionalUserFromDB = userService.findByUserName(currentUser.getUsername());
+        if (optionalUserFromDB.isPresent()) {
+            com.traveller.domain.User userFromDB = optionalUserFromDB.get();
+            trip.getPassengers().add(userFromDB);
+            tripService.save(trip);
+        } else {
+            ra.addFlashAttribute("message", "пользователь,под которым вы " +
+                    "пытаетесь присоединиться к поездке отсутвует в БД");
+        }
+        return "redirect:/main";
+
+    }
+
+
 }
