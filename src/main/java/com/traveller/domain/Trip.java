@@ -41,7 +41,7 @@ public class Trip {
 
 
 
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany(cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH}, fetch =  FetchType.EAGER)
     @JoinTable(
             name = "trip_user",
             joinColumns = @JoinColumn(name = "trip_id"),

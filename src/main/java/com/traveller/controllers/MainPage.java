@@ -5,9 +5,9 @@ import com.traveller.service.TripService;
 import com.traveller.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -101,11 +101,19 @@ public class MainPage {
 
     }
 
-    @GetMapping("/main/delete/{id}")
-    public String deleteExistingTrip(@PathVariable Integer id, RedirectAttributes ra) {
-        if (tripService.countById(id) != 0) {
 
-            tripService.deleteById(id);
+    @GetMapping("/main/delete/{trip}")
+    @Transactional
+    public String deleteExistingTrip(@PathVariable Trip trip, RedirectAttributes ra) {
+        System.out.println(trip.getPassengers().size());
+        if (trip != null) {
+            for (com.traveller.domain.User passenger : trip.getPassengers()) {
+                passenger.getTrips().remove(trip);
+                userService.save(passenger);
+            }
+            trip.getPassengers().clear();
+            tripService.save(trip);
+            tripService.deleteById(trip.getId());
             ra.addFlashAttribute("message", "Поездка успешно удалена!");
 
         } else {
@@ -117,7 +125,7 @@ public class MainPage {
     @GetMapping("/main/join/{trip}")
     public String joinTheTrip(@PathVariable Trip trip, RedirectAttributes ra, Authentication authentication) {
 
-        if(trip == null){
+        if (trip == null) {
             ra.addFlashAttribute("message", "поездка,в которую вы " +
                     "пытаетесь присоединиться отсутвует в БД");
             return "redirect:/main";
