@@ -61,6 +61,8 @@ public class MainPage {
         if (optionalUserFromDB.isPresent()) {
             com.traveller.domain.User userFromDB = optionalUserFromDB.get();
             Trip trip = new Trip();
+            trip.getPassengers().clear();//явно вызывать метод clear() у коллекции passengers перед добавлением новых пассажиров к новой поездке.
+                                        // Это обеспечит очистку кэша и загрузку только тех пассажиров, которые должны быть связаны с новой поездкой.
             trip.setCreatorOfThisTrip(userFromDB);
             model.addAttribute("newTrip", trip);
             model.addAttribute("paigeName", "Создание новой поездки");
@@ -105,7 +107,7 @@ public class MainPage {
     @GetMapping("/main/delete/{trip}")
     @Transactional
     public String deleteExistingTrip(@PathVariable Trip trip, RedirectAttributes ra) {
-        System.out.println(trip.getPassengers().size());
+
         if (trip != null) {
             for (com.traveller.domain.User passenger : trip.getPassengers()) {
                 passenger.getTrips().remove(trip);
@@ -122,25 +124,33 @@ public class MainPage {
         return "redirect:/main";
     }
 
+
     @GetMapping("/main/join/{trip}")
+    @Transactional
     public String joinTheTrip(@PathVariable Trip trip, RedirectAttributes ra, Authentication authentication) {
 
-        if (trip == null) {
-            ra.addFlashAttribute("message", "поездка,в которую вы " +
-                    "пытаетесь присоединиться отсутвует в БД");
+        try {
+            if (trip == null) {
+                ra.addFlashAttribute("message", "поездка,в которую вы " +
+                        "пытаетесь присоединиться отсутвует в БД");
+                return "redirect:/main";
+            }
+
+            User currentUser = (User) authentication.getPrincipal();
+            Optional<com.traveller.domain.User> optionalUserFromDB = userService.findByUserName(currentUser.getUsername());
+            if (optionalUserFromDB.isPresent()) {
+                com.traveller.domain.User userFromDB = optionalUserFromDB.get();
+                userFromDB.getTrips().add(trip);
+                userService.save(userFromDB);
+            } else {
+                ra.addFlashAttribute("message", "пользователь,под которым вы " +
+                        "пытаетесь присоединиться к поездке отсутвует в БД");
+            }
+            return "redirect:/main";
+        } catch (Exception e) {
+            e.printStackTrace();
             return "redirect:/main";
         }
-        User currentUser = (User) authentication.getPrincipal();
-        Optional<com.traveller.domain.User> optionalUserFromDB = userService.findByUserName(currentUser.getUsername());
-        if (optionalUserFromDB.isPresent()) {
-            com.traveller.domain.User userFromDB = optionalUserFromDB.get();
-            trip.getPassengers().add(userFromDB);
-            tripService.save(trip);
-        } else {
-            ra.addFlashAttribute("message", "пользователь,под которым вы " +
-                    "пытаетесь присоединиться к поездке отсутвует в БД");
-        }
-        return "redirect:/main";
 
     }
 

@@ -3,6 +3,7 @@ package com.traveller.service;
 import com.traveller.domain.Trip;
 import com.traveller.repos.TripRepo;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -15,7 +16,7 @@ public class TripService {
         this.tripRepo = tripRepo;
     }
 
-
+    @Transactional
     public List<Trip> findAll() {
         return tripRepo.findAll();
     }

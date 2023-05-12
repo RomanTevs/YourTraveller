@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -41,13 +42,13 @@ public class Trip {
 
 
 
-    @ManyToMany(cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH}, fetch =  FetchType.EAGER)
+    @ManyToMany(cascade = CascadeType.ALL, fetch =  FetchType.EAGER)
     @JoinTable(
             name = "trip_user",
             joinColumns = @JoinColumn(name = "trip_id"),
             inverseJoinColumns = @JoinColumn(name = "user_id")
     )
-    private Set<User> passengers = new HashSet<>();
+    private List<User> passengers = new ArrayList<>();
 
 
     public Trip(String fromTown, String toTown, LocalDate departureDateAndTime) {

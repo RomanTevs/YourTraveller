@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -32,13 +33,13 @@ public class User {
         this.password = password;
     }
 
-    @ManyToMany(cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH},fetch =  FetchType.EAGER)
+    @ManyToMany(cascade = CascadeType.ALL,fetch =  FetchType.EAGER)
     @JoinTable(
             name = "trip_user",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "trip_id")
     )
-    private List<Trip> trips;
+    private List<Trip> trips = new ArrayList<>();
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
