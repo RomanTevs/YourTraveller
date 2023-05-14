@@ -154,5 +154,34 @@ public class MainPage {
 
     }
 
+    @GetMapping("/main/leave/{trip}")
+    @Transactional
+    public String leaveTheTrip(@PathVariable Trip trip, RedirectAttributes ra, Authentication authentication) {
+
+        try {
+            if (trip == null) {
+                ra.addFlashAttribute("message", "поездка,в которую вы " +
+                        "пытаетесь присоединиться отсутвует в БД");
+                return "redirect:/main";
+            }
+
+            User currentUser = (User) authentication.getPrincipal();
+            Optional<com.traveller.domain.User> optionalUserFromDB = userService.findByUserName(currentUser.getUsername());
+            if (optionalUserFromDB.isPresent()) {
+                com.traveller.domain.User userFromDB = optionalUserFromDB.get();
+                userFromDB.getTrips().remove(trip);
+                userService.save(userFromDB);
+            } else {
+                ra.addFlashAttribute("message", "пользователь,под которым вы " +
+                        "пытаетесь заимодействовать с поездкой отсутвует в БД");
+            }
+            return "redirect:/main";
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "redirect:/main";
+        }
+
+    }
+
 
 }
