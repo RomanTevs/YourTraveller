@@ -88,7 +88,7 @@
                         <td>
                             <a class="h6 mr-3"
                                th:href="@{'/main/join/' + ${trip.id}}"
-                               th:if="${trip.creatorOfThisTrip.name != currentUser.name}">
+                               th:if="${trip.creatorOfThisTrip.name != currentUser.name and !trip.passengers.contains(currentUser)}">
                                 <button>Присоединиться к поездке</button>
                             </a>
                             <a class="h6 mr-3"
