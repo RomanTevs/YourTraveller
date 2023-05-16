@@ -1,7 +1,6 @@
 package com.traveller.service;
 
-import com.traveller.domain.Trip;
-import com.traveller.domain.User;
+import com.traveller.domain.UserEntity;
 import com.traveller.repos.UserRepo;
 import org.springframework.stereotype.Service;
 import java.util.List;
@@ -16,7 +15,7 @@ public class UserService {
     }
 
 
-    public Optional<User> findByUserName(String username) {
+    public Optional<UserEntity> findByUserName(String username) {
         return userRepo.findByName(username);
     }
 
@@ -24,15 +23,15 @@ public class UserService {
         return userRepo.existsByName(username);
     }
 
-    public List<User> findAll() {
+    public List<UserEntity> findAll() {
         return userRepo.findAll();
     }
 
-    public void save(User user) {
-        userRepo.save(user);
+    public void save(UserEntity userEntity) {
+        userRepo.save(userEntity);
     }
 
-    public Optional<User> findById(Integer id) {
+    public Optional<UserEntity> findById(Integer id) {
         return userRepo.findById(id);
     }
 
