@@ -1,10 +1,11 @@
 package com.traveller.service;
 
 import com.traveller.domain.Role;
-import com.traveller.domain.User;
+import com.traveller.domain.UserEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -25,9 +26,9 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userService.findByUserName(username).orElseThrow(() -> new UsernameNotFoundException("Username can not be found"));
-        return new org.springframework.security.core.userdetails.User(user.getName(), user.getPassword(),
-                mapRolesToGrantedAuthorities(user.getRoles()));
+        UserEntity userEntity = userService.findByUserName(username).orElseThrow(() -> new UsernameNotFoundException("Username can not be found"));
+        return new User(userEntity.getName(), userEntity.getPassword(),
+                mapRolesToGrantedAuthorities(userEntity.getRoles()));
     }
 
     private Collection<GrantedAuthority> mapRolesToGrantedAuthorities(Collection<Role> roles) {

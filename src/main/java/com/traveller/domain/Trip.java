@@ -8,9 +8,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 
 @Entity
@@ -23,7 +21,7 @@ public class Trip {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
 
-    /*private User owner;*/
+    /*private UserEntity owner;*/
     @NotEmpty(message = "Неправильно указан город,пожалуйста выберете город из выпадающего списка")
     @Size(min = 2, max = 30)
     private String fromTown;
@@ -38,7 +36,7 @@ public class Trip {
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id")
-    private User creatorOfThisTrip;
+    private UserEntity creatorOfThisTrip;
 
 
 
@@ -48,7 +46,7 @@ public class Trip {
             joinColumns = @JoinColumn(name = "trip_id"),
             inverseJoinColumns = @JoinColumn(name = "user_id")
     )
-    private List<User> passengers = new ArrayList<>();
+    private List<UserEntity> passengers = new ArrayList<>();
 
 
     public Trip(String fromTown, String toTown, LocalDate departureDateAndTime) {

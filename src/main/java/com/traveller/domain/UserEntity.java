@@ -17,7 +17,7 @@ import java.util.Set;
 @AllArgsConstructor
 @Data
 @Table(name = "users")
-public class User {
+public class UserEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
@@ -28,7 +28,7 @@ public class User {
     @Size(min = 3, max = 90, message = "размер от 2 до 27")
     private String password;
 
-    public User(String name, String password) {
+    public UserEntity(String name, String password) {
         this.name = name;
         this.password = password;
     }

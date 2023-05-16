@@ -2,7 +2,7 @@ package com.traveller.controllers;
 
 
 import com.traveller.domain.Role;
-import com.traveller.domain.User;
+import com.traveller.domain.UserEntity;
 import com.traveller.service.RoleService;
 import com.traveller.service.UserService;
 import jakarta.validation.Valid;
@@ -40,27 +40,27 @@ public class AuthController {
     //http://localhost:8080/registration
     @GetMapping("/registration")
     public String showRegistrationPage(Model model) {
-        model.addAttribute("newUser",new User());
+        model.addAttribute("newUser",new UserEntity());
         return "auth/registration-page";
     }
 
 
     @PostMapping("/registration")
-    public String Registration(@ModelAttribute("newUser") @Valid User user,
+    public String Registration(@ModelAttribute("newUser") @Valid UserEntity userEntity,
                              BindingResult result, RedirectAttributes ra) {
 
         if (result.hasErrors()) {
             return "auth/registration-page";
         }
-        if (userService.existByName(user.getName())) {
+        if (userService.existByName(userEntity.getName())) {
             ra.addFlashAttribute("message", "Пользователь с таким именем уже существует!");
             return "redirect:/registration";
         }
         Role roleForNewUser = roleService.findByName("USER").get();
 
-        user.getRoles().add(roleForNewUser);
+        userEntity.getRoles().add(roleForNewUser);
 
-        userService.save(user);
+        userService.save(userEntity);
 
         ra.addFlashAttribute("message", "Ваш аккаунт успешно создан,пожалуйста залогиньтесь под ним");
         return "redirect:/login";

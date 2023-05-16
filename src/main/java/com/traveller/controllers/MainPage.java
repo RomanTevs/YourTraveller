@@ -1,6 +1,7 @@
 package com.traveller.controllers;
 
 import com.traveller.domain.Trip;
+import com.traveller.domain.UserEntity;
 import com.traveller.service.TripService;
 import com.traveller.service.UserService;
 import jakarta.validation.Valid;
@@ -40,10 +41,10 @@ public class MainPage {
         model.addAttribute("trips", trips);
 
         User springSecurityUser = (User) authentication.getPrincipal();
-        Optional<com.traveller.domain.User> optionalUserFromDB = userService.findByUserName(springSecurityUser.getUsername());
+        Optional<UserEntity> optionalUserFromDB = userService.findByUserName(springSecurityUser.getUsername());
         if (optionalUserFromDB.isPresent()) {
-            com.traveller.domain.User userFromDB = optionalUserFromDB.get();
-            model.addAttribute("currentUser", userFromDB);
+            UserEntity userEntityFromDB = optionalUserFromDB.get();
+            model.addAttribute("currentUser", userEntityFromDB);
         }
 
         boolean isAdmin = authentication.getAuthorities().stream()
@@ -57,13 +58,11 @@ public class MainPage {
     public String createNewTrip(Model model, Authentication authentication, RedirectAttributes ra) {
 
         User currentUser = (User) authentication.getPrincipal();
-        Optional<com.traveller.domain.User> optionalUserFromDB = userService.findByUserName(currentUser.getUsername());
+        Optional<UserEntity> optionalUserFromDB = userService.findByUserName(currentUser.getUsername());
         if (optionalUserFromDB.isPresent()) {
-            com.traveller.domain.User userFromDB = optionalUserFromDB.get();
+            UserEntity userEntityFromDB = optionalUserFromDB.get();
             Trip trip = new Trip();
-            trip.getPassengers().clear();//явно вызывать метод clear() у коллекции passengers перед добавлением новых пассажиров к новой поездке.
-                                        // Это обеспечит очистку кэша и загрузку только тех пассажиров, которые должны быть связаны с новой поездкой.
-            trip.setCreatorOfThisTrip(userFromDB);
+            trip.setCreatorOfThisTrip(userEntityFromDB);
             model.addAttribute("newTrip", trip);
             model.addAttribute("paigeName", "Создание новой поездки");
             return "main-page/tripForm";
@@ -109,7 +108,7 @@ public class MainPage {
     public String deleteExistingTrip(@PathVariable Trip trip, RedirectAttributes ra) {
 
         if (trip != null) {
-            for (com.traveller.domain.User passenger : trip.getPassengers()) {
+            for (UserEntity passenger : trip.getPassengers()) {
                 passenger.getTrips().remove(trip);
                 userService.save(passenger);
             }
@@ -137,11 +136,11 @@ public class MainPage {
             }
 
             User currentUser = (User) authentication.getPrincipal();
-            Optional<com.traveller.domain.User> optionalUserFromDB = userService.findByUserName(currentUser.getUsername());
+            Optional<UserEntity> optionalUserFromDB = userService.findByUserName(currentUser.getUsername());
             if (optionalUserFromDB.isPresent()) {
-                com.traveller.domain.User userFromDB = optionalUserFromDB.get();
-                userFromDB.getTrips().add(trip);
-                userService.save(userFromDB);
+                UserEntity userEntityFromDB = optionalUserFromDB.get();
+                userEntityFromDB.getTrips().add(trip);
+                userService.save(userEntityFromDB);
             } else {
                 ra.addFlashAttribute("message", "пользователь,под которым вы " +
                         "пытаетесь присоединиться к поездке отсутвует в БД");
@@ -166,11 +165,11 @@ public class MainPage {
             }
 
             User currentUser = (User) authentication.getPrincipal();
-            Optional<com.traveller.domain.User> optionalUserFromDB = userService.findByUserName(currentUser.getUsername());
+            Optional<UserEntity> optionalUserFromDB = userService.findByUserName(currentUser.getUsername());
             if (optionalUserFromDB.isPresent()) {
-                com.traveller.domain.User userFromDB = optionalUserFromDB.get();
-                userFromDB.getTrips().remove(trip);
-                userService.save(userFromDB);
+                UserEntity userEntityFromDB = optionalUserFromDB.get();
+                userEntityFromDB.getTrips().remove(trip);
+                userService.save(userEntityFromDB);
             } else {
                 ra.addFlashAttribute("message", "пользователь,под которым вы " +
                         "пытаетесь заимодействовать с поездкой отсутвует в БД");
