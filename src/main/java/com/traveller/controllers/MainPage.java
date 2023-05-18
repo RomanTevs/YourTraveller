@@ -40,12 +40,8 @@ public class MainPage {
         List<Trip> trips = tripService.findAll();
         model.addAttribute("trips", trips);
 
-        User springSecurityUser = (User) authentication.getPrincipal();
-        Optional<UserEntity> optionalUserFromDB = userService.findByUserName(springSecurityUser.getUsername());
-        if (optionalUserFromDB.isPresent()) {
-            UserEntity userEntityFromDB = optionalUserFromDB.get();
-            model.addAttribute("currentUser", userEntityFromDB);
-        }
+        UserEntity userEntityFromDB = getUserEntityFromDB(authentication, userService);
+        model.addAttribute("currentUser", userEntityFromDB);
 
         boolean isAdmin = authentication.getAuthorities().stream()
                 .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ADMIN"));
@@ -57,20 +53,12 @@ public class MainPage {
     @GetMapping("main/creating-new-trip")
     public String createNewTrip(Model model, Authentication authentication, RedirectAttributes ra) {
 
-        User currentUser = (User) authentication.getPrincipal();
-        Optional<UserEntity> optionalUserFromDB = userService.findByUserName(currentUser.getUsername());
-        if (optionalUserFromDB.isPresent()) {
-            UserEntity userEntityFromDB = optionalUserFromDB.get();
-            Trip trip = new Trip();
-            trip.setCreatorOfThisTrip(userEntityFromDB);
-            model.addAttribute("newTrip", trip);
-            model.addAttribute("paigeName", "Создание новой поездки");
-            return "main-page/tripForm";
-        } else {
-            ra.addFlashAttribute("message", "пользователь,под которым вы " +
-                    "пытаетесь создать поездку отсутвует в БД");
-            return "redirect:/main";
-        }
+        UserEntity userEntityFromDB = getUserEntityFromDB(authentication, userService);
+        Trip trip = new Trip();
+        trip.setCreatorOfThisTrip(userEntityFromDB);
+        model.addAttribute("newTrip", trip);
+        model.addAttribute("paigeName", "Создание новой поездки");
+        return "main-page/tripForm";
 
     }
 
@@ -134,17 +122,9 @@ public class MainPage {
                         "пытаетесь присоединиться отсутвует в БД");
                 return "redirect:/main";
             }
-
-            User currentUser = (User) authentication.getPrincipal();
-            Optional<UserEntity> optionalUserFromDB = userService.findByUserName(currentUser.getUsername());
-            if (optionalUserFromDB.isPresent()) {
-                UserEntity userEntityFromDB = optionalUserFromDB.get();
-                userEntityFromDB.getTrips().add(trip);
-                userService.save(userEntityFromDB);
-            } else {
-                ra.addFlashAttribute("message", "пользователь,под которым вы " +
-                        "пытаетесь присоединиться к поездке отсутвует в БД");
-            }
+            UserEntity userEntityFromDB = getUserEntityFromDB(authentication, userService);
+            userEntityFromDB.getTrips().add(trip);
+            userService.save(userEntityFromDB);
             return "redirect:/main";
         } catch (Exception e) {
             e.printStackTrace();
@@ -152,6 +132,7 @@ public class MainPage {
         }
 
     }
+
 
     @GetMapping("/main/leave/{trip}")
     @Transactional
@@ -163,17 +144,9 @@ public class MainPage {
                         "пытаетесь присоединиться отсутвует в БД");
                 return "redirect:/main";
             }
-
-            User currentUser = (User) authentication.getPrincipal();
-            Optional<UserEntity> optionalUserFromDB = userService.findByUserName(currentUser.getUsername());
-            if (optionalUserFromDB.isPresent()) {
-                UserEntity userEntityFromDB = optionalUserFromDB.get();
-                userEntityFromDB.getTrips().remove(trip);
-                userService.save(userEntityFromDB);
-            } else {
-                ra.addFlashAttribute("message", "пользователь,под которым вы " +
-                        "пытаетесь заимодействовать с поездкой отсутвует в БД");
-            }
+            UserEntity userEntityFromDB = getUserEntityFromDB(authentication, userService);
+            userEntityFromDB.getTrips().remove(trip);
+            userService.save(userEntityFromDB);
             return "redirect:/main";
         } catch (Exception e) {
             e.printStackTrace();
@@ -182,5 +155,9 @@ public class MainPage {
 
     }
 
-
+    private UserEntity getUserEntityFromDB(Authentication authentication, UserService userService) {
+        User SpringSecurityUser = (User) authentication.getPrincipal();
+        Optional<UserEntity> optionalUserEntity = userService.findByUserName(SpringSecurityUser.getUsername());
+        return optionalUserEntity.get();
+    }
 }
