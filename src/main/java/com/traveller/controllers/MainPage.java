@@ -68,18 +68,42 @@ public class MainPage {
         if (result.hasErrors()) {
             return "main-page/tripForm";
         }
+        //Поездка trip из параметров метода и такая же поездка(поездка с таким же id, набором пассажиров и тд) - это
+        // две разные сущности,по этому я сначала удаляю соответсвующую поездку из БД , что бы потом
+        if (tripService.countById(trip.getId()) > 0) {
+            Optional<Trip> optionalTrip = tripService.findById(trip.getId());
+            if (optionalTrip.isPresent()) {
+                Trip tripFromDB = optionalTrip.get();
+                for (UserEntity passenger : tripFromDB.getPassengers()) {
+                    passenger.getTrips().remove(tripFromDB);
+                    userService.save(passenger);
+                }
+                tripFromDB.getPassengers().clear();
+                tripService.save(tripFromDB);
+                tripService.deleteById(tripFromDB.getId());
+            }
+        }
+        // иметь возможность нормально сохранить поездку из аргумента метода:
         tripService.save(trip);
         ra.addFlashAttribute("message", "Изменения успешно внесены!");
         return "redirect:/main";
+        // если не удалять поездку из БД , то я получаю проблему с merge-ем
+        // т.е. со слиянием и внисением изменений в существующую заранее поездку из БД
+        //ошибка слияния выглядела так: Multiple representations of the same entity [com.traveller.domain.Trip#2803] are being merged.
+        //Managed: [Trip{id=2803, fromTown='Гагарин', toTown='Калач', departureDateAndTime=2023-05-25}];
+        //Detached: [Trip{id=2803, fromTown='Гагарин', toTown='Калач', departureDateAndTime=2023-05-30}]
+        // то есть путем предварительного удаления поездки из БД я решил эту ошибку и сейчас я могу
+        // изменять поездки,даже если в них уже есть пассажиры!
     }
 
     @GetMapping("/main/edit/{id}")
     public String editExistingTrip(Model model, @PathVariable Integer id, RedirectAttributes ra) {
 
         Optional<Trip> optionalTrip = tripService.findById(id);
+
         if (optionalTrip.isPresent()) {
-            Trip tripToEdit = optionalTrip.get();
-            model.addAttribute("newTrip", tripToEdit);
+            Trip tripFromDB = optionalTrip.get();
+            model.addAttribute("newTrip", tripFromDB);
             model.addAttribute("paigeName", "Изменение существующей поездки");
             return "main-page/tripForm";
 
