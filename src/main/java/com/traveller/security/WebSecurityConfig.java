@@ -1,6 +1,5 @@
 package com.traveller.security;
 
-
 import com.traveller.security.filters.CustomAuthFilter;
 import com.traveller.security.filters.JWTFilter;
 import org.springframework.context.annotation.Bean;
@@ -47,6 +46,7 @@ public class WebSecurityConfig {
                 .logoutUrl("/logout")
                 .logoutSuccessUrl("/login")
                 .deleteCookies("Authorization")
+                .deleteCookies("JSESSIONID")
                 .clearAuthentication(true)
                 .invalidateHttpSession(false);
 

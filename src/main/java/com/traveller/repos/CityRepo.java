@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface CityRepo extends JpaRepository<City,Integer> {
 
-    /*List<City> findByNameOfTheCityStartingWith(String input);*/
+
 
     List<City> findFirst9ByNameOfTheCityStartingWithIgnoreCase(String input);
 
